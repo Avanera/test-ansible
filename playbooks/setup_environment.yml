@@ -1,0 +1,35 @@
+
+
+- name: Set up Ruby on Rails development environment
+  hosts: vm-arina
+  become: true
+
+  tasks:
+    - name: Update APT cache
+      ansible.builtin.apt:
+        update_cache: yes
+      tags:
+        - update_cache
+
+    - name: Install essential packages (Git, Make, Nodejs, Yarn)
+      ansible.builtin.apt:
+        name:
+          - git
+          - make
+          - nodejs
+          - yarn
+        state: present
+      tags:
+        - install_packages
+
+    - name: Create users (arya, sansa, tirion)
+      ansible.builtin.user:
+        name: "{{ item }}"
+        state: present
+        shell: /bin/bash
+      loop:
+        - arya
+        - sansa
+        - tirion
+      tags:
+        - create_users
