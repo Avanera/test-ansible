@@ -1,0 +1,27 @@
+
+- hosts: vm-arina
+  become: true
+  tasks:
+    - name: install Nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: latest
+
+    - name: copy HTML index file
+      ansible.builtin.copy: 
+        src: ../files/index.html
+        dest: /usr/share/nginx/html/index.html 
+
+    - name: update nginx config
+      ansible.builtin.copy: 
+        src: ../files/nginx.conf
+        dest: /etc/nginx/nginx.conf
+      notify: 
+        - restart nginx
+
+  handlers:
+    - name: restart nginx
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded
+
