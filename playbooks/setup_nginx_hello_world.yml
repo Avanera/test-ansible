@@ -1,6 +1,12 @@
 
 - hosts: vm-arina
+  gather_facts: no
   become: true
+
+  vars:
+    nginx_port: 8080
+    root_dir: /var/www/html
+
   tasks:
     - name: install Nginx
       ansible.builtin.apt:
@@ -10,7 +16,7 @@
     - name: copy HTML index file
       ansible.builtin.copy: 
         src: ../files/index.html
-        dest: /usr/share/nginx/html/index.html 
+        dest: "{{ root_dir }}/index.html"
 
     - name: update nginx config
       ansible.builtin.copy: 
