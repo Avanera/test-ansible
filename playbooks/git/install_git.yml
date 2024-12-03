@@ -1,4 +1,5 @@
 - hosts: servers
+  gather_facts: no
 
   tasks:
     - name: install git
