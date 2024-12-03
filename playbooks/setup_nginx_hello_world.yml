@@ -1,5 +1,5 @@
 
-- hosts: vm-arina
+- hosts: servers
   gather_facts: no
   become: true
 
@@ -14,7 +14,7 @@
         state: latest
 
     - name: copy HTML index file
-      ansible.builtin.copy: 
+      ansible.builtin.template: 
         src: ../files/index.html
         dest: "{{ root_dir }}/index.html"
 
