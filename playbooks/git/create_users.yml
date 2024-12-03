@@ -1,0 +1,52 @@
+- hosts: vm-arina
+  become: true
+  gather_facts: no
+
+  vars:
+    users:
+      - jaime
+      - sansa
+      - robert
+
+  tasks:
+    - name: Create users (jaime, sansa, robert)
+      ansible.builtin.user:
+        name: "{{ item }}"
+        state: present
+        shell: /bin/bash
+      loop: "{{ users }}"
+
+    - name: Configure Git for users
+      ansible.builtin.template:
+        src: ../../files/gitconfig.j2
+        dest: "/home/{{ item }}/.gitconfig"
+        owner: "{{ item }}"
+        group: "{{ item }}"
+        mode: '0644'
+      loop: "{{ users }}"
+
+    - name: Create .ssh directory for users
+      ansible.builtin.file:
+        path: "/home/{{ item }}/.ssh"
+        state: directory
+        owner: "{{ item }}"
+        group: "{{ item }}"
+        mode: '0700'
+      loop: "{{ users }}"
+
+    - name: Add SSH authorized keys
+      ansible.builtin.copy:
+        src: "../../files/id_rsa.pub"
+        dest: "/home/{{ item }}/.ssh/authorized_keys"
+        owner: "{{ item }}"
+        group: "{{ item }}"
+        mode: '0600'
+      loop: "{{ users }}"
+
+# to check the task:
+#
+# ssh jaime@174.138.58.189
+# cat ~/.gitconfig
+# git init
+# git st
+# cat ~/.ssh/authorized_keys
